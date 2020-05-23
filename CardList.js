@@ -49,9 +49,7 @@ export default function CardList() {
     }
     if (state.isloading) {
         return (
-            <View style={styles.CardListcontainer}>
-                <ActivityIndicator size="large" />
-            </View>
+            <ActivityIndicator style={{ margin: 0, padding: 0, top: "50%" }} size="large" />
         )
     } else {
         let { statewise, st } = state
