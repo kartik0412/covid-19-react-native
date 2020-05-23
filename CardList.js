@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { ThemeContext } from './App'
-import { StyleSheet, Dimensions, Image, StatusBar, View, Text, TouchableOpacity, ActivityIndicator, Animated, Picker } from 'react-native';
+import { StyleSheet, Image, StatusBar, View, Text, TouchableOpacity, ActivityIndicator, Animated, Picker } from 'react-native';
 import axios from 'axios';
 import Card from "./Card"
 import PieChart from './Piechart';
@@ -57,6 +57,7 @@ export default function CardList() {
         let lightsrc = './assets/images/light.png'
         let nightsrc = './assets/images/night.png'
         return (
+
             <View style={[{ backgroundColor: islight ? "rgb(0, 123, 255)" : "#121212" }, styles.container]}>
                 <StatusBar translucent backgroundColor="transparent" />
 
@@ -106,7 +107,7 @@ export default function CardList() {
                             color2={"rgba(40, 167, 69,0.18)"} />
 
                         <Card
-                            color={"rgb(108, 117, 125)"}
+                            color={"#919191"}
                             title={"Deaths"}
                             delta={statewise[st] ? statewise[st].deltadeaths : 0}
                             value={statewise[st] ? statewise[st].deaths : 0}
