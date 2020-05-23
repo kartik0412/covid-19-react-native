@@ -35,12 +35,11 @@ export default function Piechart(props) {
             legendFontSize: 14,
         },
     ]
-    console.log(props)
     return (
         <PieChart
             data={data}
-            width={Dimensions.get('window').width - 16}
-            height={220}
+            width={Dimensions.get('window').width - 10}
+            height={Math.floor(Dimensions.get('window').height / 3.5)}
             chartConfig={{
                 backgroundColor: '#1cc910',
                 backgroundGradientFrom: '#eff3ff',
@@ -57,7 +56,7 @@ export default function Piechart(props) {
             }}
             accessor="population"
             backgroundColor="transparent"
-            paddingLeft="15"
+            paddingLeft="6"
             absolute //for the absolute number remove if you want percentage
         />
 

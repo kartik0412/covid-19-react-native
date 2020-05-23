@@ -21,7 +21,7 @@ export default function Card(props) {
 
 const styles = StyleSheet.create({
     cardContainer: {
-        height: "80%",
+        height: "75%",
         width: "23%",
         display: "flex",
         flexWrap: "nowrap",
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "25%",
         display: "flex",
-        marginTop: -10,
+        marginTop: -7,
         marginBottom: 10,
         justifyContent: "center",
         alignItems: "center"
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "25%",
         display: "flex",
+        marginTop: -5,
         justifyContent: "center",
         alignItems: "center"
     },

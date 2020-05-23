@@ -64,7 +64,7 @@ export default function CardList() {
                     <Image style={{ width: 25, height: 25 }} source={islight ? require(nightsrc) : require(lightsrc)} />
                 </TouchableOpacity>
 
-                <Image style={styles.img} source={require("./assets/images/cv.png")} />
+                <Image style={styles.img} resizeMode="contain" source={require("./assets/images/cv.png")} />
                 <Animated.View style={[{
                     backgroundColor: islight ? "white" : "#000000",
                     height: slideup.slide.interpolate({
@@ -125,14 +125,16 @@ export default function CardList() {
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 55,
+        padding: 0,
+        margin: 0,
+        paddingTop: 40,
         height: "100%",
-        width: "100%",
-        zIndex: 1
+        width: "100%"
+
     },
     imagestyle: {
         right: "-90%",
-        marginTop: -23,
+        marginTop: -5,
         width: 25,
         zIndex: 100,
         height: 25
@@ -156,7 +158,6 @@ const styles = StyleSheet.create({
         fontSize: 4.5 * rem,
     },
     CardListcontainer: {
-        paddingTop: 40,
         width: "100%",
         display: "flex",
         flexDirection: "row",
@@ -164,12 +165,12 @@ const styles = StyleSheet.create({
         paddingTop: 70,
         justifyContent: "center",
         bottom: 0,
-        position: "absolute",
         borderTopLeftRadius: 60,
         borderTopRightRadius: 60,
+        position: "absolute",
     },
     select: {
-        width: "60%",
+        width: "65%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
         display: "flex",
         justifyContent: "center",
         width: "100%",
-        height: "30%",
+        height: "32%",
         flexDirection: "row"
     }
 });
