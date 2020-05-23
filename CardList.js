@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { ThemeContext } from './App'
-import { StyleSheet, Image, StatusBar, View, Text, TouchableOpacity, ActivityIndicator, Animated, Picker } from 'react-native';
+import { StyleSheet, Dimensions, Image, StatusBar, View, Text, TouchableOpacity, ActivityIndicator, Animated, Picker } from 'react-native';
 import axios from 'axios';
 import Card from "./Card"
+import PieChart from './Piechart';
 
 const rem = 16;
+
 export default function CardList() {
 
     let { theme: { islight }, settheme } = useContext(ThemeContext)
@@ -27,7 +29,6 @@ export default function CardList() {
             }
         ).start();
         getData()
-
     }, [])
 
     const getLasteUpdateTime = (x) => {
@@ -48,10 +49,10 @@ export default function CardList() {
         return " " + res;
     }
     if (state.isloading) {
-        return (
-            <ActivityIndicator style={{ margin: 0, padding: 0, top: "50%" }} size="large" />
-        )
-    } else {
+        return <ActivityIndicator style={{ margin: 0, padding: 0, top: "50%" }} size="large" />
+
+    }
+    else {
         let { statewise, st } = state
         let lightsrc = './assets/images/light.png'
         let nightsrc = './assets/images/night.png'
@@ -63,10 +64,7 @@ export default function CardList() {
                     <Image style={{ width: 25, height: 25 }} source={islight ? require(nightsrc) : require(lightsrc)} />
                 </TouchableOpacity>
 
-                <Image
-                    style={styles.img}
-                    source={require("./assets/images/cv.png")}
-                />
+                <Image style={styles.img} source={require("./assets/images/cv.png")} />
                 <Animated.View style={[{
                     backgroundColor: islight ? "white" : "#000000",
                     height: slideup.slide.interpolate({
@@ -75,45 +73,49 @@ export default function CardList() {
                     })
                 }, styles.CardListcontainer]}>
 
-                    <View style={[{ borderColor: islight ? "black" : "white", }, styles.select]}>
+                    <View style={[{ borderColor: islight ? "#121212" : "white", }, styles.select]}>
                         <Picker
                             selectedValue={st}
-                            style={{ color: islight ? "black" : "white", height: 50, width: 220 }}
+                            style={{ color: islight ? "#121212" : "white", height: 50, width: 220 }}
                             onValueChange={(itemValue) => setState(prevst => ({ ...prevst, st: itemValue }))}
                         >
                             {statewise.map((i, j) => <Picker.Item key={j} label={i.state} value={j} />)}
                         </Picker>
                     </View>
                     <View style={styles.lastupdate}>
-                        <Text style={{ color: islight ? "black" : "white" }}>
+                        <Text style={{ fontFamily: "Quicksand-SemiBold", color: islight ? "#121212" : "white" }}>
                             Last updated :{" "}{statewise[st] && getLasteUpdateTime(statewise[st].lastupdatedtime)}
                         </Text>
                     </View>
+                    <View style={styles.cardBoxContainer}>
+                        <Card color={"rgb(255, 7, 58)"}
+                            title={"Confirmed"}
+                            delta={statewise[st] ? Number(statewise[st].deltaconfirmed) : 0}
+                            value={statewise[st] ? statewise[st].confirmed : 0}
+                            color2={"rgba(255, 7, 58, 0.13)"} />
 
-                    <Card color={"rgb(255, 7, 58)"}
-                        title={"Confirmed"}
-                        delta={statewise[st] ? Number(statewise[st].deltaconfirmed) : 0}
-                        value={statewise[st] ? statewise[st].confirmed : 0}
-                        color2={"rgba(255, 7, 58, 0.13)"} />
+                        <Card color={"rgb(0, 123, 255)"}
+                            title={"Active"}
+                            value={statewise[st] ? statewise[st].active : 0}
+                            color2={"rgba(0, 123, 255, 0.18)"} />
 
-                    <Card color={"rgb(0, 123, 255)"}
-                        title={"Active"}
-                        value={statewise[st] ? statewise[st].active : 0}
-                        color2={"rgba(0, 123, 255, 0.18)"} />
+                        <Card color={"rgb(40, 167, 69)"}
+                            title={"Recovered"}
+                            delta={statewise[st] ? statewise[st].deltarecovered : 0}
+                            value={statewise[st] ? statewise[st].recovered : 0}
+                            color2={"rgba(40, 167, 69,0.18)"} />
 
-                    <Card color={"rgb(40, 167, 69)"}
-                        title={"Recovered"}
-                        delta={statewise[st] ? statewise[st].deltarecovered : 0}
-                        value={statewise[st] ? statewise[st].recovered : 0}
-                        color2={"rgba(40, 167, 69,0.18)"} />
+                        <Card
+                            color={"rgb(108, 117, 125)"}
+                            title={"Deaths"}
+                            delta={statewise[st] ? statewise[st].deltadeaths : 0}
+                            value={statewise[st] ? statewise[st].deaths : 0}
+                            color2={"rgba(108, 117,125, 0.13)"} />
 
-                    <Card
-                        color={"rgb(108, 117, 125)"}
-                        title={"Deaths"}
-                        delta={statewise[st] ? statewise[st].deltadeaths : 0}
-                        value={statewise[st] ? statewise[st].deaths : 0}
-                        color2={"rgba(108, 117,125, 0.13)"} />
-
+                    </View>
+                    <View style={{ height: "100%", width: "100%" }}>
+                        {statewise[st] && <PieChart data={statewise[st]} />}
+                    </View>
                 </Animated.View>
             </View >
         )
@@ -172,15 +174,23 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginTop: -55,
-        borderWidth: 1,
+        borderWidth: 2,
         height: 40,
-        borderRadius: 50
+        borderRadius: 50,
+        borderColor: "#919191"
     },
     lastupdate: {
         width: "100%",
         display: "flex",
         marginTop: -5,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+    },
+    cardBoxContainer: {
+        display: "flex",
+        justifyContent: "center",
+        width: "100%",
+        height: "30%",
+        flexDirection: "row"
     }
 });
