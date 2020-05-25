@@ -26,7 +26,7 @@ export default function CardList() {
             slideup.slide,
             {
                 toValue: 1,
-                duration: 700,
+                duration: 700
             }
         ).start();
         getData()
@@ -117,7 +117,7 @@ export default function CardList() {
 
                     </View>
                     <View style={{ height: "100%", width: "100%" }}>
-                        {statewise[st] && <PieChart data={statewise[st]} />}
+                        {statewise[st] && statewise[st].confirmed > 0 && <PieChart data={statewise[st]} />}
                     </View>
                 </Animated.View>
             </View >
