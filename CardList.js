@@ -26,7 +26,8 @@ export default function CardList() {
             slideup.slide,
             {
                 toValue: 1,
-                duration: 700
+                duration: 700,
+                useNativeDriver: false
             }
         ).start();
         getData()

@@ -2,5 +2,6 @@
   "name": "covid19",
   "displayName": "Covid19",
   "verison": "1.0",
-  "icon": "coronavirus.png"
+  "icon": "coronavirus.png",
+  "orientation": "portrait"
 }

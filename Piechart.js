@@ -16,6 +16,7 @@ export default function Piechart(props) {
         <View style={{ display: "flex", flexDirection: "row", width: "100%", height: "100%" }}>
             <View style={{ width: "50%", height: "100%" }}>
                 <VictoryPie
+                    padAngle={1}
                     origin={{
                         x: Dimensions.get('screen').width / 3,
                         y: Dimensions.get('window').height / 6.5
