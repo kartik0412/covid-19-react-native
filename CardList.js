@@ -29,14 +29,6 @@ export default function CardList() {
                 st: 0, isloading: false
             })
         }
-        Animated.timing(
-            slideup.slide,
-            {
-                toValue: 1,
-                duration: 700,
-                useNativeDriver: false
-            }
-        ).start();
         getData()
     }, [])
 
@@ -71,6 +63,15 @@ export default function CardList() {
         let currentbgcolor = current == 0 ? "rgba(255, 7, 58,0.2)" : current == 1 ? "rgba(40, 167, 69,0.18)" : "rgba(108, 117,125,0.2)"
         let lastbgcolor = last == 0 ? "rgba(255, 7, 58,0.2)" : last == 1 ? "rgba(40, 167, 69,0.18)" : "rgba(108, 117,125,0.2)"
 
+        Animated.timing(
+            slideup.slide,
+            {
+                toValue: 1,
+                duration: 700,
+                useNativeDriver: false
+            }
+        ).start();
+
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <StatusBar translucent={true} backgroundColor={islight ? "rgb(0, 123, 255)" : "#121212"} />
@@ -88,7 +89,7 @@ export default function CardList() {
                             backgroundColor: islight ? "white" : "#000000",
                             height: slideup.slide.interpolate({
                                 inputRange: [0, 1],
-                                outputRange: ["0%", "65%"]
+                                outputRange: ["0%", "79%"]
                             })
                         }, styles.CardListcontainer]}>
 
@@ -214,7 +215,6 @@ const styles = StyleSheet.create({
     CardListcontainer: {
         width: "100%",
         display: "flex",
-        height: "79%",
         flexDirection: "row",
         flexWrap: "wrap",
         paddingTop: 70,
