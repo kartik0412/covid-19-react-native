@@ -1,22 +1,23 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { ThemeContext } from './App'
-import { StyleSheet, Image, StatusBar, ScrollView, View, Text, TouchableOpacity, ActivityIndicator, Animated, Picker, SafeAreaView } from 'react-native';
-import { Platform, NativeModules } from 'react-native';
-const { StatusBarManager } = NativeModules;
-const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
+import { Platform, NativeModules, StyleSheet, Image, StatusBar, ScrollView, View, Text, TouchableOpacity, ActivityIndicator, Animated, Picker, SafeAreaView } from 'react-native';
 import axios from 'axios';
 import Card from "./Card"
 import PieChart from './Piechart';
 import LineChart from './LineChart';
 
-
+const { StatusBarManager } = NativeModules;
+const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
 const rem = 16;
 
 export default function CardList() {
 
     let { theme: { islight }, settheme } = useContext(ThemeContext)
     let [state, setState] = useState({ isloading: true, statewise: [], st: 0 })
-    let [mode, setMode] = useState(0)
+    let [mode, setMode] = useState({ current: 0, last: 0 })
+    let [contentHeight, setHeight] = useState(800)
+
+
     let slideup = useState({ slide: new Animated.Value(0) })[0]
 
     useEffect(() => {
@@ -38,6 +39,8 @@ export default function CardList() {
         ).start();
         getData()
     }, [])
+
+
 
     const getLasteUpdateTime = (x) => {
         x = x.split("/");
@@ -61,15 +64,21 @@ export default function CardList() {
     }
     else {
         let { statewise, st, timeseries } = state
+        let { current, last } = mode
         let lightsrc = './assets/images/light.png'
         let nightsrc = './assets/images/night.png'
-
+        let linecolor = current == 0 ? "rgb(255, 7, 58)" : current == 1 ? "rgb(40, 167, 69)" : "#919191"
+        let currentbgcolor = current == 0 ? "rgba(255, 7, 58,0.2)" : current == 1 ? "rgba(40, 167, 69,0.18)" : "rgba(108, 117,125,0.2)"
+        let lastbgcolor = last == 0 ? "rgba(255, 7, 58,0.2)" : last == 1 ? "rgba(40, 167, 69,0.18)" : "rgba(108, 117,125,0.2)"
 
         return (
             <SafeAreaView style={{ flex: 1 }}>
-                <ScrollView scrollEnabled={true} showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }} >
+                <StatusBar translucent={true} backgroundColor={islight ? "rgb(0, 123, 255)" : "#121212"} />
+                <ScrollView
+                    scrollEnabled={true}
+                    showsVerticalScrollIndicator={false}
+                >
                     <View style={[{ backgroundColor: islight ? "rgb(0, 123, 255)" : "#121212" }, styles.container]}>
-                        <StatusBar translucent={true} backgroundColor={islight ? "rgb(0, 123, 255)" : "#121212"} />
                         <TouchableOpacity activeOpacity={1} style={styles.imagestyle} onPress={() => settheme({ islight: !islight })}>
                             <Image style={{ width: 30, height: 30 }} source={islight ? require(nightsrc) : require(lightsrc)} />
                         </TouchableOpacity>
@@ -83,7 +92,7 @@ export default function CardList() {
                             })
                         }, styles.CardListcontainer]}>
 
-                            <View style={[{ borderColor: islight ? "#121212" : "white", }, styles.select]}>
+                            <View style={[{ borderColor: islight ? "#121212" : "white" }, styles.select]}>
                                 <Picker
                                     selectedValue={st}
                                     style={{ color: islight ? "#121212" : "white", height: 50, width: 220 }}
@@ -97,12 +106,13 @@ export default function CardList() {
                                     Last updated :{" "}{statewise[st] && getLasteUpdateTime(statewise[st].lastupdatedtime)}
                                 </Text>
                             </View>
+
                             <View style={styles.cardBoxContainer}>
                                 <Card color={"rgb(255, 7, 58)"}
                                     title={"Confirmed"}
                                     delta={statewise[st] ? Number(statewise[st].deltaconfirmed) : 0}
                                     value={statewise[st] ? statewise[st].confirmed : 0}
-                                    color2={"rgba(255, 7, 58, 0.13)"} />
+                                    color2={"rgba(255, 7, 58,0.2)"} />
 
                                 <Card color={"rgb(0, 123, 255)"}
                                     title={"Active"}
@@ -120,46 +130,47 @@ export default function CardList() {
                                     title={"Deaths"}
                                     delta={statewise[st] ? statewise[st].deltadeaths : 0}
                                     value={statewise[st] ? statewise[st].deaths : 0}
-                                    color2={"rgba(108, 117,125, 0.13)"} />
+                                    color2={"rgba(108, 117,125,0.2)"} />
 
                             </View>
-                            <View style={{ height: "28%", width: "100%" }}>
-                                {statewise[st] && statewise[st].confirmed > 0 && <PieChart data={statewise[st]} />}
-                            </View>
-
+                            {statewise[st] && statewise[st].confirmed > 0 &&
+                                <View style={{ height: "25%", width: "100%", marginBottom: 30 }}>
+                                    <PieChart data={statewise[st]} />
+                                </View>
+                            }
                             <View style={styles.bar}>
 
-                                <View style={{ display: "flex", flexDirection: "row", width: "95%", height: 40 }}>
-                                    <TouchableOpacity activeOpacity={1} onPress={() => setMode(0)} style={{ width: "30%", borderColor: islight ? "black" : "white", borderBottomWidth: mode == 0 ? 5 : 0 }}>
-                                        <Text style={[{ color: islight ? "black" : "white" }, styles.barText]} >Confirmed</Text>
+                                <View style={{ display: "flex", flexDirection: "row", width: "95%", height: 35 }}>
+                                    <TouchableOpacity
+                                        activeOpacity={0.7}
+                                        onPress={() => setMode(prevst => ({ current: 0, last: prevst.current }))}
+                                        style={[{ backgroundColor: current == 0 ? "rgb(255, 7, 58)" : islight ? "white" : "black" }, styles.barButton]}>
+                                        <Text style={[{ color: current == 0 ? "white" : islight ? "black" : "white" }, styles.barText]} >Confirmed</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity activeOpacity={1} onPress={() => setMode(1)} style={{ width: "30%", borderColor: islight ? "black" : "white", borderBottomWidth: mode == 1 ? 5 : 0 }}>
-                                        <Text style={[{ color: islight ? "black" : "white" }, styles.barText]}>Recovered</Text>
+                                    <TouchableOpacity
+                                        activeOpacity={0.7}
+                                        onPress={() => setMode(prevst => ({ current: 1, last: prevst.current }))}
+                                        style={[{ backgroundColor: current == 1 ? "rgb(40, 167, 69)" : islight ? "white" : "black" }, styles.barButton]} >
+                                        <Text style={[{ color: current == 1 ? "white" : islight ? "black" : "white" }, styles.barText]}>Recovered</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity activeOpacity={1} onPress={() => setMode(2)} style={{ width: "30%", borderColor: islight ? "black" : "white", borderBottomWidth: mode == 2 ? 5 : 0 }}>
-                                        <Text style={[{ color: islight ? "black" : "white" }, styles.barText]}>Deaths</Text>
+                                    <TouchableOpacity
+                                        activeOpacity={0.7}
+                                        onPress={() => setMode(prevst => ({ current: 2, last: prevst.current }))}
+                                        style={[{ backgroundColor: current == 2 ? "#919191" : islight ? "white" : "black" }, styles.barButton]}>
+                                        <Text style={[{ color: current == 2 ? "white" : islight ? "black" : "white" }, styles.barText]}>Deaths</Text>
                                     </TouchableOpacity>
+                                </View>
+                                <View style={{ width: "95%", height: 40 }}>
+                                    <Text style={{ fontFamily: "Quicksand-SemiBold", lineHeight: 40, color: islight ? "#121212" : "white" }}>Growth of Cases in Last 45 days in India</Text>
+                                </View>
 
-                                </View>
-                                <View style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignContent: "center",
-                                    height: "75%",
-                                    width: "95%",
-                                    padding: 10,
-                                    marginTop: 10,
-                                    borderRadius: 15,
-                                    backgroundColor: mode == 0 ? "rgba(255, 7, 58, 0.13)" : mode == 1 ? "rgba(40, 167, 69,0.18)" : "rgba(108, 117,125, 0.13)"
-                                }}>
-                                    {timeseries && <LineChart color={mode == 0 ? "rgb(255, 7, 58)" : mode == 1 ? "rgb(40, 167, 69)" : "#919191"} mode={mode} timeseries={timeseries} />}
-                                </View>
+                                {timeseries && <LineChart color={linecolor} currentbgcolor={currentbgcolor} lastbgcolor={lastbgcolor} mode={current} timeseries={timeseries} />}
 
                             </View>
                         </Animated.View>
                     </View >
                 </ScrollView>
-            </SafeAreaView>
+            </SafeAreaView >
         )
     }
 }
@@ -203,7 +214,7 @@ const styles = StyleSheet.create({
     CardListcontainer: {
         width: "100%",
         display: "flex",
-        height: "80%",
+        height: "79%",
         flexDirection: "row",
         flexWrap: "wrap",
         paddingTop: 70,
@@ -241,15 +252,21 @@ const styles = StyleSheet.create({
     bar: {
         display: "flex",
         width: "100%",
-        height: "50%",
+        height: "52%",
         alignContent: "center",
         alignItems: "center",
         justifyContent: "center",
     },
+    barButton: {
+        width: "30%",
+        marginRight: 15,
+        borderRadius: 7,
+    },
     barText: {
-        lineHeight: 40,
+        lineHeight: 31,
         fontFamily: "Quicksand-Bold",
         fontSize: 17,
-        textTransform: 'uppercase'
+        textTransform: 'uppercase',
+        textAlign: "center"
     }
 });
