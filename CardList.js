@@ -1,3 +1,4 @@
+'use strict';
 import React, { useEffect, useState, useContext } from 'react'
 import { ThemeContext } from './App'
 import { Platform, NativeModules, StyleSheet, Image, StatusBar, ScrollView, View, Text, TouchableOpacity, ActivityIndicator, Animated, Picker, SafeAreaView } from 'react-native';
@@ -10,13 +11,12 @@ const { StatusBarManager } = NativeModules;
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
 const rem = 16;
 
+
 export default function CardList() {
 
     let { theme: { islight }, settheme } = useContext(ThemeContext)
     let [state, setState] = useState({ isloading: true, statewise: [], st: 0 })
     let [mode, setMode] = useState({ current: 0, last: 0 })
-    let [contentHeight, setHeight] = useState(800)
-
 
     let slideup = useState({ slide: new Animated.Value(0) })[0]
 
@@ -135,7 +135,7 @@ export default function CardList() {
 
                             </View>
                             {statewise[st] && statewise[st].confirmed > 0 &&
-                                <View style={{ height: "25%", width: "100%", marginBottom: 30 }}>
+                                <View style={{ height: "26%", width: "100%", marginBottom: 30 }}>
                                     <PieChart data={statewise[st]} />
                                 </View>
                             }
@@ -161,12 +161,7 @@ export default function CardList() {
                                         <Text style={[{ color: current == 2 ? "white" : islight ? "black" : "white" }, styles.barText]}>Deaths</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <View style={{ width: "95%", height: 40 }}>
-                                    <Text style={{ fontFamily: "Quicksand-SemiBold", lineHeight: 40, color: islight ? "#121212" : "white" }}>Growth of Cases in Last 45 days in India</Text>
-                                </View>
-
                                 {timeseries && <LineChart color={linecolor} currentbgcolor={currentbgcolor} lastbgcolor={lastbgcolor} mode={current} timeseries={timeseries} />}
-
                             </View>
                         </Animated.View>
                     </View >
@@ -184,7 +179,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 0,
         margin: 0,
-        height: 1150
+        height: 1200
 
     },
     imagestyle: {
